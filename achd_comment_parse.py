@@ -79,8 +79,11 @@ def other_parse(list_of_text):
     prep=list(parselist(orderedstop=stop_lines, textlist=list_of_text[1:]))
     container=[]
     for assesment in prep:
-        prep_dict={"code_label":assesment[0],"comments":assesment[1:]}
-        container.append(prep_dict)
+        label = assesment[0]
+        comment = ''.join([x for x in assesment[1:] if '# Page' not in x])
+        if '# Page' not in label: 
+            prep_dict={"code_label":label,"comments":comment}
+            container.append(prep_dict)
     return container
     #for line in list_of_text[1:]:
     #    if line in stop_lines:
