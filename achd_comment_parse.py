@@ -15,7 +15,6 @@ from achd_json_parse import parselist
 #docs2 = list(json_docs)
 #docs[11]['comments_a48']
 #label=['Violation:', 'Comments','Food Code Section', 'Corrective Action']
-
 def dict_parse(textlist):
     #v_id=re.compile('(\d+)\s(\w.*)')
     #violation_number
@@ -28,15 +27,16 @@ def dict_parse(textlist):
     for line in textlist:
         if line != None:
             if 'Violation' in line:
-                code_label.append(line)
+                code_label.append(line.replace('Violation: ',''))
             elif 'Corrective Action:' in line:
-                corrective_action.append(line)
+                corrective_action.append(line.replace('Corrective Action: ',''))
             elif 'Food Code' in line:
-                food_code.append(line)
+                food_code.append(line.replace('Food Code Section(s): ',''))
             #elif 'Other Assesment observations and comments:':
             #    other_assesment.append(line)
             else:
                 comments.append(line)
+
         else:
             line = 'Violation'
             if 'Violation' in line:
@@ -49,24 +49,45 @@ def dict_parse(textlist):
             #    other_assessment.append(line)
             else:
                 comments.append(line)
-
+        
     if code_label != []:
         return {
             "code_label":code_label[0],
             "food_code":food_code,
             "corrective_action": corrective_action,
-            "comments": comments,
-            "other_assesments": other_assesment
+            "comments": comments
         }
-    else:
-        return {
-            "code_label":code_label,
-            "food_code":food_code,
-            "corrective_action": corrective_action,
-            "comments": comments,
-            "other_assesments": other_assesment
-        }
+#    else:
+#        return {"other_assesment":textlist[0],"comments":textlist[1:]}
+#    {
+#            "code_label":code_label,
+#            "food_code":food_code,
+#            "corrective_action": corrective_action,
+#            "comments": comments,
+#            "other_assesments": other_assesment
+#        }
 
+#Use the parselist function
+def other_parse(list_of_text):
+    "parser for other assesment section"
+    
+    dict_group = {"code_label":"", "comments":""}
+    category=re.compile('^\d{1,2}[.]?\s[A-Z]')
+    stop_lines=[line for line in list_of_text if category.match(line[:6])]
+    #.isdigit()] 
+    #
+    prep=list(parselist(orderedstop=stop_lines, textlist=list_of_text[1:]))
+    container=[]
+    for assesment in prep:
+        prep_dict={"code_label":assesment[0],"comments":assesment[1:]}
+        container.append(prep_dict)
+    return container
+    #for line in list_of_text[1:]:
+    #    if line in stop_lines:
+    #        dict_group["code_label"]=line
+    #    elif line not in stop_lines:
+    #        dict_group["comments"]+=line
+    #    yield dict_group
 
 def severity_parse(list_of_text):
     
@@ -74,11 +95,12 @@ def severity_parse(list_of_text):
     medium=re.compile('MEDIUM RISK')
     low=re.compile('LOW RISK')
 
-    dict_group={'high':[],'med': [],'low':[]}
+    dict_group={}
+    #'high':[],'med': [],'low':[]
     for line in list_of_text:
         #if 'HIGH' in line[0]:
         if high.search(line[0]):
-           dict_group['high']=''.join(line[1:])
+            dict_group['high']=''.join(line[1:])
         #elif 'MEDIUM' in line[0]:
         elif medium.search(line[0]):
             dict_group['med']=''.join(line[1:])
@@ -92,26 +114,32 @@ def severity_parse(list_of_text):
 def final_comments(doc):
     "reparse and group comments"
     comments=list(getcomments(doc))
+    
     r_group=[[violation_label(y) for y in comment] for comment in comments]
     for violation in r_group:
         #try:
         if violation != None:
             comment_iso=dict_parse(violation)
+            if comment_iso == None:
+                break
             stopline=[x for x in comment_iso['comments'] if 'RISK*' in x]
             comment_parse=parselist(stopline, comment_iso)
             risk_iso=severity_parse(list(parselist(stopline, comment_iso['comments'])))
             comment_iso['comments']=risk_iso
             yield comment_iso
+               
         #except:
-
         else:
-            violation=['Violation:']
-            comment_iso=dict_parse(violation)
-            stopline=[x for x in comment_iso['comments'] if 'RISK*' in x]
-            comment_parse=parselist(stopline, comment_iso)
-            risk_iso=severity_parse(list(parselist(stopline, comment_iso['comments'])))
-            comment_iso['comments']=risk_iso
+            #violation=['Violation:']
+            #comment_iso=dict_parse(violation)
+            #stopline=[x for x in comment_iso['comments'] if 'RISK*' in x]
+            #comment_parse=parselist(stopline, comment_iso)
+            #risk_iso=severity_parse(list(parselist(stopline, comment_iso['comments'])))
+            #comment_iso['comments']=risk_iso
             yield comment_iso
+    if "Other Assesment observations and comments:\n" == comments[-1][0]:
+        other_asses=comments.pop()
+        yield {'other_assesment':other_parse(other_asses)}
 
 class Inspection(object):
     "expect a tuple with the inspection id and base json"
