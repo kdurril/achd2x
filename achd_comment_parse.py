@@ -104,9 +104,12 @@ def other_parse(list_of_text):
             elif status[3] in prep_dict['code_label']:
                 prep_dict['code_label']=prep_dict['code_label'][:-len(status[3])-1]
                 prep_dict['status']=status[3]
+            elif status[4] in prep_dict['code_label']:
+                prep_dict['code_label']=prep_dict['code_label'][:-len(status[4])-1]
+                prep_dict['status']=status[4]
             if prep_dict['comments'] and footer.match(prep_dict['comments'][-1]):
                 prep_dict['comments'].pop()
-                prep_dict['comments'] = ''.join(prep_dict['comments'])
+            prep_dict['comments'] = ''.join(prep_dict['comments'])
             container.append(prep_dict)
     return container
 
@@ -170,6 +173,7 @@ class Inspection(object):
         self.grid=tuple(grid_relabel(gridgather_dict(doc[1])))
         self.comments=tuple(final_comments(doc[1]))
         #self.time = to_date()
+ 
     
     def __repl__(self):
         return self.inspect_id
@@ -221,8 +225,10 @@ class Inspection(object):
 
     def to_json(self):
         "serialize object to json"
-        return json.dumps(self, default=lambda o: o.__dict__, 
-            sort_keys=True, indent=4)
+        return json.dumps({'inspect_id':self.inspect_id,
+        'client':self.client,
+        'grid': self.grid,
+        'comments':self.comments})
          
 
 #comments_iso=dict_parse(r_group)['comments']
