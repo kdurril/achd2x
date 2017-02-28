@@ -88,6 +88,28 @@ def json2db(thelist=pdfjson(), database='postgres', user='kenneth', password=Non
     con.commit()
     con.close()
 
+def update_jsonalt(database='postgres', user='kenneth', password=None):
+    con = psycopg2.connect(database, user, password)
+    cur = con.cursor()
+
+    qry_json = '''SELECT inspect_id, docjson FROM achd2016 
+                  WHERE inspect_id > 201702200001
+                  AND docjson IS NOT NULL;'''
+    cur.execute(qry_json)
+    docs=cur.fetchall()
+    jsondocs=({'ins_name':x[0], 'doc_json':Inspection(x).to_json()} for x in docs if x[1].get('comments_a48'))
+    for doc in jsondocs:
+        try:
+            cur.execute("UPDATE achd2016 SET docjsonalt = %(doc_json)s WHERE inspect_id = %(ins_name)s;", doc)
+        except:
+            pass
+        finally:
+            print(doc['ins_name'])
+
+    con.commit()
+    con.close()
+
+
 def tsvectorize(database='postgres', user='kenneth', password=None):
     con = psycopg2.connect(database=database, user=user, password=password)
     cur = con.cursor()
@@ -140,3 +162,4 @@ if __name__ == '__main__':
     txt2db()
     json2db()
     tsvectorize()
+    update_jsonalt()

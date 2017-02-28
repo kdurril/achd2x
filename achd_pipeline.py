@@ -3,7 +3,7 @@
 import subprocess
 from achd_daily3 import url_prep, absolute, grab_pdf
 from achd_jsondb import pdftxt, pdfjson, txt2db, json2db
-from achd_jsondb import tsvectorize
+from achd_jsondb import tsvectorize, update_jsonalt
 import datetime as dt
 import glob
 import os
@@ -75,4 +75,5 @@ json=pdfjson(in_path=base_project+'json/'+day+'*.json')
 txt2db(thelist=txt,database='postgres',user='kenneth',password=PASSWORD)
 json2db(thelist=json,database='postgres',user='kenneth',password=PASSWORD)
 tsvectorize(database='postgres',user='kenneth',password=PASSWORD)
+update_jsonalt(database='postgres',user='kenneth',password=PASSWORD)
 #"achd_jsontxtalt"
