@@ -5,6 +5,7 @@ import glob
 import json
 import os
 from collections import OrderedDict
+from achd_comment_parse import Inspection
 
 #con = psycopg2.connect(database="postgres", user="kenneth", password="achd282")
 #cur = con.cursor()
@@ -89,7 +90,7 @@ def json2db(thelist=pdfjson(), database='postgres', user='kenneth', password=Non
     con.close()
 
 def update_jsonalt(database='postgres', user='kenneth', password=None):
-    con = psycopg2.connect(database, user, password)
+    con = psycopg2.connect(database=database, user=user, password=password)
     cur = con.cursor()
 
     qry_json = '''SELECT inspect_id, docjson FROM achd2016 
