@@ -7,33 +7,6 @@ import os
 from collections import OrderedDict
 from achd_comment_parse import Inspection
 
-#con = psycopg2.connect(database="postgres", user="kenneth", password="achd282")
-#cur = con.cursor()
-
-#cur.execute('''CREATE TABLE achdjson (ID SERIAL PRIMARY KEY,
-#                         inspect_id BIGINT, 
-#                         doc JSONB);''')
-#con.commit()
-
-#f_list = ['json/achd_match.json', 'json/achd_unmatch.json']
-
-#with open('json/achd_match.json') as match:
-#    match_docs = json.loads(match.read())
-#for doc in match_docs:
-#    cur.execute("INSERT INTO achdjson (inspect_id, doc) VALUES(%s, %s)", (doc['inspect_id'],json.dumps(doc)))
-#con.commit()
-
-#with open('json/achd_unmatch.json') as unmatch:
-#    unmatch_docs = json.loads(unmatch.read())
-#for doc in unmatch_docs:
-#    cur.execute("INSERT INTO achdjson (inspect_id, doc) VALUES(%s, %s)", (doc['inspect_id'],json.dumps(doc)))
-#con.commit()
-
-
-#text_file '/home/kenneth/Documents/scripts/achdremix/txt/2016071*.txt'
-#text_insert="INSERT INTO achdjson (inspect_id, doc) VALUES (%(ins_name)s,%(ins_text)s)", doc
-#json_file '/home/kenneth/Documents/scripts/achdremix/json/2016071*.json'
-#json_update='''UPDATE achd2016 SET docjson = %s WHERE inspect_id = %s'''
 
 def pdftxt(in_path='/home/kenneth/Documents/scripts/achdremix/txt/2016082*.txt'):
     for pdffile in glob.glob(in_path):
@@ -49,6 +22,7 @@ def pdfjson(in_path='/home/kenneth/Documents/scripts/achdremix/json/2016082*.jso
     
 
 def txt2db(thelist=pdftxt(), database='postgres', user='kenneth', password=None):
+    "Add text from initial pdf to text parsing - this loses its structure"
     con = psycopg2.connect(database=database, user=user, password=password)
     cur = con.cursor()
     
@@ -68,6 +42,7 @@ def txt2db(thelist=pdftxt(), database='postgres', user='kenneth', password=None)
     con.close()
 
 def json2db(thelist=pdfjson(), database='postgres', user='kenneth', password=None):
+    "Add json from initial pdf parsing"
     con = psycopg2.connect(database=database, user=user, password=password)
     cur = con.cursor()
 
@@ -90,15 +65,17 @@ def json2db(thelist=pdfjson(), database='postgres', user='kenneth', password=Non
     con.close()
 
 def update_jsonalt(database='postgres', user='kenneth', password=None):
+    "Add parsed json doc to postgres"
     con = psycopg2.connect(database=database, user=user, password=password)
     cur = con.cursor()
-
     qry_json = '''SELECT inspect_id, docjson FROM achd2016 
                   WHERE inspect_id > 201702200001
                   AND docjson IS NOT NULL;'''
     cur.execute(qry_json)
     docs=cur.fetchall()
-    jsondocs=({'ins_name':x[0], 'doc_json':Inspection(x).to_json()} for x in docs if x[1].get('comments_a48'))
+    jsondocs=({'ins_name':x[0], 
+               'doc_json':Inspection(x).to_json()} 
+               for x in docs if x[1].get('comments_a48'))
     for doc in jsondocs:
         try:
             cur.execute("UPDATE achd2016 SET docjsonalt = %(doc_json)s WHERE inspect_id = %(ins_name)s;", doc)
@@ -112,40 +89,13 @@ def update_jsonalt(database='postgres', user='kenneth', password=None):
 
 
 def tsvectorize(database='postgres', user='kenneth', password=None):
+    "Make full-text searchable with normalization, stemming"
     con = psycopg2.connect(database=database, user=user, password=password)
     cur = con.cursor()
     'Concert text to ts_vector'
     qry_updatedb = "UPDATE achd2016 SET docvector = to_tsvector(doctxt) WHERE docvector IS NULL;"
     cur.execute(qry_updatedb)
     con.commit()
-
-#for doc in the_text:
-
-#        cur.execute("INSERT INTO achdjson (inspect_id, doc) VALUES (%s,%s)", (doc['ins_name'], doc['ins_text']))
-
-#for doc in the_text:
-#    if len(doc['ins_name']) == 12:
-#        cur.execute("INSERT INTO achd2016 (inspect_id, doctxt) VALUES (%s,%s);", (doc['ins_name'], doc['ins_text']))
-      
-#and doc['ins_text'][-1] == '}'
-#CREATE TABLE achd2016 (inspect_id bigint NOT NULL, doctxt varchar NOT NULL, docjson jsonb);
-
-
-#def jsondb(base_file):
-#    with open(base_file) as match:
-#        match_docs = json.loads(match.read())
-#    for doc in match_docs:
-#        cur.execute("INSERT INTO achdjson (inspect_id, doc) VALUES(%s, %s)", (doc['inspect_id'],json.dumps(doc)))
-#    con.commit()
-
-#def jsondb(base_file):
-#    with open(base_file) as match:
-#        match_docs = json.loads(match.read())
-#        inpsect_id = os.path.basename(match.name).split('.')[0]
-#        match_docs['inspect_id'] = inpsect_id
-    
-#    cur.execute("INSERT INTO achdjson (inspect_id, doc) VALUES(%s, %s)", (doc['inspect_id'],json.dumps(doc)))
-#    con.commit()
 
 def jsonalso():
     the_json=pdfjson()
