@@ -48,7 +48,7 @@ import sys
 #review design to see that scripts are built with callables that can take outputs and dates
 base_project='/home/kenneth/Documents/scripts/achdremix_2017/'
 day = '{:%Y%m%d}'.format(dt.datetime.today())
-#day = '{:%Y%m%d}'.format(dt.datetime(2016,11,30))
+#day = '{:%Y%m%d}'.format(dt.datetime(2017,3,15))
 
 dir_out = glob.iglob(base_project+day+'/'+day+'*.pdf')
 

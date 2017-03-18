@@ -8,13 +8,13 @@ from collections import OrderedDict
 from achd_comment_parse import Inspection
 
 
-def pdftxt(in_path='/home/kenneth/Documents/scripts/achdremix/txt/2016082*.txt'):
+def pdftxt(in_path='/home/kenneth/Documents/scripts/achdremix_2017/txt/*.txt'):
     for pdffile in glob.glob(in_path):
         inspect_id=os.path.basename(pdffile)[:-4]
         with open(pdffile,'r') as pdfopen:
             yield {'ins_name':inspect_id, 'ins_text': pdfopen.read()}
 
-def pdfjson(in_path='/home/kenneth/Documents/scripts/achdremix/json/2016082*.json'):
+def pdfjson(in_path='/home/kenneth/Documents/scripts/achdremix_2017/json/*.json'):
     for pdfjob in glob.glob(in_path):
         inspect_id=os.path.basename(pdfjob)[:-5]
         with open(pdfjob,'r') as pdfopen:
@@ -69,7 +69,7 @@ def update_jsonalt(database='postgres', user='kenneth', password=None):
     con = psycopg2.connect(database=database, user=user, password=password)
     cur = con.cursor()
     qry_json = '''SELECT inspect_id, docjson FROM achd2016 
-                  WHERE inspect_id > 201702200001
+                  WHERE inspect_id > 201703070001
                   AND docjson IS NOT NULL;'''
     cur.execute(qry_json)
     docs=cur.fetchall()

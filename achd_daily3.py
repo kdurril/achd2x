@@ -12,23 +12,7 @@ from functools import wraps
 from os import mkdir, path, stat
 
 from glob import glob
-#import tika
-#tika.initVM()
-#from tika import parser
 from os.path import basename
-
-'''def parse(func):
-    'basic tika parser'
-    @wraps
-    def wrapper(*args, **kwargs):
-        pdf_file=func()
-        out = basename(pdf_file).split('.')[0]+'.txt'
-        with open(out, 'w') as f:
-            parsed = parser.from_file(pdf_file)
-            f.write(parsed['content'])
-            return pdf_file
-    return wrapper
-'''
 
 def parse(pdf_file=None):
         'convert to a decorator'
@@ -75,7 +59,7 @@ def grab_pdf(inspection):
         (X11; Ubuntu; Linux x86_64; rv:46.0) 
         Gecko/2016101 Firefox/46.0'''),\
         ('Accept-encoding', 'gzip')]
-    folder = "/home/kenneth/Documents/scripts/achdremix/"+inspection[-12:-4]
+    folder = "/home/kenneth/Documents/scripts/achdremix_2017/"+inspection[-12:-4]
     pdffile = inspection[-12:]
     
     if path.isdir(folder) == False:
