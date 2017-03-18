@@ -59,7 +59,7 @@ def grab_pdf(inspection):
         (X11; Ubuntu; Linux x86_64; rv:46.0) 
         Gecko/2016101 Firefox/46.0'''),\
         ('Accept-encoding', 'gzip')]
-    folder = "/home/kenneth/Documents/scripts/achdremix_2017/"+inspection[-12:-4]
+    folder = "./"+inspection[-12:-4]
     pdffile = inspection[-12:]
     
     if path.isdir(folder) == False:

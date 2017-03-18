@@ -8,13 +8,13 @@ from collections import OrderedDict
 from achd_comment_parse import Inspection
 
 
-def pdftxt(in_path='/home/kenneth/Documents/scripts/achdremix_2017/txt/*.txt'):
+def pdftxt(in_path='./txt/*.txt'):
     for pdffile in glob.glob(in_path):
         inspect_id=os.path.basename(pdffile)[:-4]
         with open(pdffile,'r') as pdfopen:
             yield {'ins_name':inspect_id, 'ins_text': pdfopen.read()}
 
-def pdfjson(in_path='/home/kenneth/Documents/scripts/achdremix_2017/json/*.json'):
+def pdfjson(in_path='./json/*.json'):
     for pdfjob in glob.glob(in_path):
         inspect_id=os.path.basename(pdfjob)[:-5]
         with open(pdfjob,'r') as pdfopen:

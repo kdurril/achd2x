@@ -5,7 +5,7 @@ from achd_pdfbox1229 import *
 from os import path
 import datetime as dt
 
-base_project='/home/kenneth/Documents/scripts/achdremix_2017/'
+base_project='./'
 input_date=dt.datetime.today()
 day = '{:%Y%m%d}'.format(input_date)
 #day = '{:%Y%m%d}'.format(dt.datetime(2017,3,15))

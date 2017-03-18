@@ -46,7 +46,7 @@ import sys
 #  - are paths relative or absolute
 
 #review design to see that scripts are built with callables that can take outputs and dates
-base_project='/home/kenneth/Documents/scripts/achdremix_2017/'
+base_project='./'
 day = '{:%Y%m%d}'.format(dt.datetime.today())
 #day = '{:%Y%m%d}'.format(dt.datetime(2017,3,15))
 
@@ -62,7 +62,7 @@ for inspection in encounters:
         print(str(inspection))
 
 #"jython -Dpython.path=/home/kenneth/Development/pdfbox-2.0.2/app/target/pdfbox-app-2.0.2.jar achd_test.py"
-subprocess.run("/home/kenneth/Documents/scripts/achdremix_2017/achd_jsonify.sh")
+subprocess.run("./achd_jsonify.sh")
 
 #"achd_jsondb.py"
 #password isn't sensative for this
