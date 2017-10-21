@@ -69,7 +69,7 @@ def update_jsonalt(database='postgres', user='kenneth', password=None):
     con = psycopg2.connect(database=database, user=user, password=password)
     cur = con.cursor()
     qry_json = '''SELECT inspect_id, docjson FROM achd2016 
-                  WHERE inspect_id > 201703070001
+                  WHERE inspect_id > 201709010001
                   AND docjson IS NOT NULL;'''
     cur.execute(qry_json)
     docs=cur.fetchall()
@@ -93,14 +93,14 @@ def tsvectorize(database='postgres', user='kenneth', password=None):
     con = psycopg2.connect(database=database, user=user, password=password)
     cur = con.cursor()
     'Concert text to ts_vector'
-    qry_updatedb = "UPDATE achd2016 SET docvector = to_tsvector(doctxt) WHERE docvector IS NULL;"
+    qry_updatedb = "UPDATE achd2016 SET docvector = to_tsvector(doctxt) WHERE docvector IS NULL AND inspect_id > 201706020001;"
     cur.execute(qry_updatedb)
     con.commit()
 
 def jsonalso():
     the_json=pdfjson()
     for x in the_json:
-        if x['ins_name'] > '20150413001':
+        if x['ins_name'] > '201709010001':
             try:
                 instext=json.loads(x['ins_text'])
                 yield {'ins_name':x['ins_name'], 'ins_text':instext}

@@ -56,8 +56,8 @@ def grab_pdf(inspection):
     opener = urllib.request.build_opener()
     opener.addheaders = [('User-agent',\
         '''Mozilla/5.0 
-        (X11; Ubuntu; Linux x86_64; rv:46.0) 
-        Gecko/2016101 Firefox/46.0'''),\
+        (X11; Ubuntu; Linux x86_64; rv:54.0) 
+        Gecko/20170613 Firefox/54.0'''),\
         ('Accept-encoding', 'gzip')]
     folder = "./"+inspection[-12:-4]
     pdffile = inspection[-12:]
@@ -104,4 +104,4 @@ def relative():
 
 if __name__ == '__main__':
     relative()
-    #absolute((2016,9,27),(2016,9,28))
+    #absolute((2017,10,5),(2017,10,7))

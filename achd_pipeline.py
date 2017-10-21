@@ -48,9 +48,9 @@ import sys
 #review design to see that scripts are built with callables that can take outputs and dates
 base_project='./'
 day = '{:%Y%m%d}'.format(dt.datetime.today())
-#day = '{:%Y%m%d}'.format(dt.datetime(2017,3,15))
+#day = '{:%Y%m%d}'.format(dt.datetime(2017,7,20))
 
-dir_out = glob.iglob(base_project+day+'/'+day+'*.pdf')
+#dir_out = glob.iglob(base_project+day+'/'+day+'*.pdf')
 
 #"achd_daily3.py"
 
@@ -70,7 +70,9 @@ subprocess.run("./achd_jsonify.sh")
 #password is in place because I'd rather keep the habit than not
 PASSWORD='achd282' #sys.argv[1]
 txt=pdftxt(in_path=base_project+'txt/'+day+'*.txt') 
+#txt=pdftxt(in_path=base_project+'txt/201706*.txt') 
 json=pdfjson(in_path=base_project+'json/'+day+'*.json')
+#json=pdfjson(in_path=base_project+'json/201706*.json')
 
 txt2db(thelist=txt,database='postgres',user='kenneth',password=PASSWORD)
 json2db(thelist=json,database='postgres',user='kenneth',password=PASSWORD)
