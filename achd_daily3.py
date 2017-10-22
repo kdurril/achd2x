@@ -2,17 +2,16 @@
 # -*- coding: utf-8 -*-
 # This is a daily file for downloading achd inspections
 
-import time
+from achd_datetools import *
+import datetime as dt
+from functools import wraps
+from glob import glob
+from itertools import chain
+from os import mkdir, path
+from os.path import basename
+import sys
 import urllib.request
 import urllib.error
-import datetime as dt
-import sys
-from itertools import chain
-from functools import wraps
-from os import mkdir, path, stat
-
-from glob import glob
-from os.path import basename
 
 def parse(pdf_file=None):
         'convert to a decorator'
@@ -26,31 +25,23 @@ def parse(pdf_file=None):
 def url_prep(delta=1, count=90):
     "Create iterator of urls, default yesterday, 49 inspections"
     url_stem = "http://appsrv.achd.net/reports/rwservlet?food_rep_insp&P_ENCOUNTER="
-    d = dt.date.today()
-    d1 = dt.timedelta(days=delta)
-    day = '{:%Y%m%d}'.format(d-d1)
-    base_stem = url_stem+day+'00'
-    zfil = (str(x).zfill(2) for x in range(1, count))
+    d = date.today()
+    d1 = timedelta(days=delta)
+    day = date_iso(d-d1)
+    base_stem = url_stem+day
+    zfil = (str(x).zfill(4) for x in range(1, count))
     encounters = (base_stem+x for x in zfil)
     return encounters
-
-def date_iter(start, end=dt.date.today()):
-    "date generator"
-    change = dt.timedelta(days=1)
-    while start < end:
-        yield (start-change) + change
-        start = start + change
 
 def url_direct(date):
     "Create iterator of urls from supplied date"
     url_stem = "http://appsrv.achd.net/reports/rwservlet?food_rep_insp&P_ENCOUNTER="
-    day = '{:%Y%m%d}'.format(date)
-    base_stem = url_stem+day+'00'
-    zfil = (str(x).zfill(2) for x in range(1, 86))
+    day = date_iso(date)
+    base_stem = url_stem+day
+    zfil = (str(x).zfill(4) for x in range(1, 86))
     encounters = (base_stem+x for x in zfil)
     return encounters
 
-   
 def grab_pdf(inspection):
     "Takes inspection from url_prep, download pdf"
     opener = urllib.request.build_opener()
@@ -70,22 +61,23 @@ def grab_pdf(inspection):
             with open(outputfolder, "wb") as pdfout:
                     pdfout.write(viewout.read())
             return outputfolder
-                    #time.sleep(1)
         else:
             print(viewout.getheader('Content-Type'))
-            
 
-def absolute(start=None, end=dt.datetime.today()):
+def absolute(start=None, end=None):
     "get files based on specific date range"
     "start and end must be tuples: YYYY,MM,DD"
-    start = dt.datetime(*start)
-    end = dt.datetime(*end)
+    if start == None and end == None:
+        start = dt.date.today()
+        end = dt.date.today() + dt.timedelta(days=1)
+    else:
+        start = dt.date(*start)
+        end = dt.date(*end)
     lastweek = date_iter(start, end)
     for date in lastweek:
         encounters = url_direct(date)
         for inspection in encounters:
-            try:
-                
+            try: 
                 grab_pdf(inspection)
             finally:
                 with open('inspection.log','a') as ins_log:
@@ -103,5 +95,5 @@ def relative():
         #    print("fail, {}".format(e.code))
 
 if __name__ == '__main__':
-    relative()
+    absolute()
     #absolute((2017,10,5),(2017,10,7))

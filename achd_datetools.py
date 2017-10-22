@@ -16,9 +16,9 @@ def date_iso(d: datetime.date) -> str:
     # alternative to '{:%Y%m%d}'.format(date_obj)
     return d.isoformat().replace('-','')
 
-def date_iter(start=date.today(), end=date.today()+timedelta(days=1),step=1) -> datetime.date:
+def date_iter(start=date.today(), end=date.today()+timedelta(days=1)) -> datetime.date:
     "date generator"
-    change = timedelta(days=step)
+    change = timedelta(days=1)
     while start < end:
         yield (start-change) + change
         start = start + change
@@ -31,17 +31,6 @@ def date_gen(start=(2017,8,17), end=(2017,8,18)) -> datetime.date:
     while start <= end:
         yield start
         start = start + timedelta(days=1)
-
-def url_prep(delta=1, count=90):
-    "Create iterator of urls, default yesterday, 49 inspections"
-    url_stem = "http://appsrv.achd.net/reports/rwservlet?food_rep_insp&P_ENCOUNTER="
-    d = date.today()
-    d1 = timedelta(days=delta)
-    day = date_iso(d-d1)
-    base_stem = url_stem+day
-    zfil = (str(x).zfill(4) for x in range(1, count))
-    encounters = (base_stem+x for x in zfil)
-    return encounters
 
 #list(map(date_iso,date_iter()))
 #(date_iso(x) for x in date_iter())                                      
