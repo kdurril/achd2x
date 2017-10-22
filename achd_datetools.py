@@ -32,5 +32,7 @@ def date_gen(start=(2017,8,17), end=(2017,8,18)) -> datetime.date:
         yield start
         start = start + timedelta(days=1)
 
+achd_today = date_iso(date.today()) 
+
 #list(map(date_iso,date_iter()))
 #(date_iso(x) for x in date_iter())                                      
