@@ -1,11 +1,13 @@
 #!/usr/bin/env python
-import psycopg2
-import re
+
+from achd_comment_parse import Inspection
+from achd_datetools import achd_today
+from collections import OrderedDict
 import glob
 import json
 import os
-from collections import OrderedDict
-from achd_comment_parse import Inspection
+import psycopg2
+import re
 
 
 def pdftxt(in_path='./txt/*.txt'):
@@ -69,9 +71,9 @@ def update_jsonalt(database='postgres', user='kenneth', password=None):
     con = psycopg2.connect(database=database, user=user, password=password)
     cur = con.cursor()
     qry_json = '''SELECT inspect_id, docjson FROM achd2016 
-                  WHERE inspect_id > 201709010001
+                  WHERE inspect_id > to_number(%s+'0001')
                   AND docjson IS NOT NULL;'''
-    cur.execute(qry_json)
+    cur.execute(qry_json,[achd_today] )
     docs=cur.fetchall()
     jsondocs=({'ins_name':x[0], 
                'doc_json':Inspection(x).to_json()} 
@@ -93,14 +95,14 @@ def tsvectorize(database='postgres', user='kenneth', password=None):
     con = psycopg2.connect(database=database, user=user, password=password)
     cur = con.cursor()
     'Concert text to ts_vector'
-    qry_updatedb = "UPDATE achd2016 SET docvector = to_tsvector(doctxt) WHERE docvector IS NULL AND inspect_id > 201706020001;"
-    cur.execute(qry_updatedb)
+    qry_updatedb = "UPDATE achd2016 SET docvector = to_tsvector(doctxt) WHERE docvector IS NULL AND inspect_id > to_number(%s+'0001');"
+    cur.execute(qry_updatedb, [achd_today])
     con.commit()
 
 def jsonalso():
     the_json=pdfjson()
     for x in the_json:
-        if x['ins_name'] > '201709010001':
+        if x['ins_name'] > achd_today+'0001':
             try:
                 instext=json.loads(x['ins_text'])
                 yield {'ins_name':x['ins_name'], 'ins_text':instext}
