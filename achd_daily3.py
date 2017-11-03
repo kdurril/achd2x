@@ -38,7 +38,7 @@ def url_direct(date):
     url_stem = "http://appsrv.achd.net/reports/rwservlet?food_rep_insp&P_ENCOUNTER="
     day = date_iso(date)
     base_stem = url_stem+day
-    zfil = (str(x).zfill(4) for x in range(1, 86))
+    zfil = (str(x).zfill(4) for x in range(1, 3))
     encounters = (base_stem+x for x in zfil)
     return encounters
 
@@ -64,15 +64,36 @@ def grab_pdf(inspection):
         else:
             print(viewout.getheader('Content-Type'))
 
+def date_input(start=None, end=None):
+    if start == None and end == None:
+        start = dt.date.today()
+        end = dt.date.today() + dt.timedelta(days=1)
+    elif isinstance(start, tuple) and isinstance(end,tuple):
+        start = dt.date(*start)
+        end = dt.date(*end)
+    elif isinstance(start, str) and isinstance(end,str):
+        format = "%Y%m%d"
+        t_start = dt.datetime.strptime(start, format)
+        t_end = dt.datetime.strptime(end, format)
+        start = dt.date(t_start.year,t_start.month,t_start.day)
+        end = dt.date(t_end.year, t_end.month, t_end.day)
+    return (start, end)
+
 def absolute(start=None, end=None):
     "get files based on specific date range"
     "start and end must be tuples: YYYY,MM,DD"
     if start == None and end == None:
         start = dt.date.today()
         end = dt.date.today() + dt.timedelta(days=1)
-    else:
+    elif isinstance(start, tuple) and isinstance(end,tuple):
         start = dt.date(*start)
         end = dt.date(*end)
+    elif isinstance(start, str) and isinstance(end,str):
+        format = "%Y%m%d"
+        t_start = dt.datetime.strptime(start, format)
+        t_end = dt.datetime.strptime(end, format)
+        start = dt.date(t_start.year,t_start.month,t_start.day)
+        end = dt.date(t_end.year, t_end.month, t_end.day)
     lastweek = date_iter(start, end)
     for date in lastweek:
         encounters = url_direct(date)
@@ -95,5 +116,5 @@ def relative():
         #    print("fail, {}".format(e.code))
 
 if __name__ == '__main__':
-    absolute()
-    #absolute((2017,10,5),(2017,10,7))
+    #absolute()
+    absolute('20171102','20171103')
