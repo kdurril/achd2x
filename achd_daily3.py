@@ -64,36 +64,47 @@ def grab_pdf(inspection):
         else:
             print(viewout.getheader('Content-Type'))
 
+#Date input helper functions
+#date_tuple and date_str allows human input that converts to datetime obj
+
+def date_tuple(start=None, end=None):
+    'helper function for date_input start:tuple'
+    start = dt.date(*start)
+    if end:
+        end = dt.date(*end)
+    if not end:
+        end = start + dt.timedelta(days=1)
+    return (start, end)
+
+def date_str(start=None, end=None):
+    'helper function for date_input start:str'
+    format = "%Y%m%d"
+    t_start = dt.datetime.strptime(start, format)
+    if end:
+        t_end = dt.datetime.strptime(end, format)
+    if not end:
+        t_end = t_start + dt.timedelta(days=1)
+    start = dt.date(t_start.year,t_start.month,t_start.day)
+    end = dt.date(t_end.year, t_end.month, t_end.day)
+    return (start, end)
+
 def date_input(start=None, end=None):
-    if start == None and end == None:
+    "allow multiple input types for creating date objects"
+    #default
+    if start == None:
         start = dt.date.today()
         end = dt.date.today() + dt.timedelta(days=1)
-    elif isinstance(start, tuple) and isinstance(end,tuple):
-        start = dt.date(*start)
-        end = dt.date(*end)
-    elif isinstance(start, str) and isinstance(end,str):
-        format = "%Y%m%d"
-        t_start = dt.datetime.strptime(start, format)
-        t_end = dt.datetime.strptime(end, format)
-        start = dt.date(t_start.year,t_start.month,t_start.day)
-        end = dt.date(t_end.year, t_end.month, t_end.day)
-    return (start, end)
+        return (start, end)
+    #tuple - (2017,5,8)
+    elif isinstance(start, tuple):
+        return date_tuple(start,end)
+    #string - '20170508'
+    elif isinstance(start, str):
+        return date_str(start,end)
 
 def absolute(start=None, end=None):
     "get files based on specific date range"
-    "start and end must be tuples: YYYY,MM,DD"
-    if start == None and end == None:
-        start = dt.date.today()
-        end = dt.date.today() + dt.timedelta(days=1)
-    elif isinstance(start, tuple) and isinstance(end,tuple):
-        start = dt.date(*start)
-        end = dt.date(*end)
-    elif isinstance(start, str) and isinstance(end,str):
-        format = "%Y%m%d"
-        t_start = dt.datetime.strptime(start, format)
-        t_end = dt.datetime.strptime(end, format)
-        start = dt.date(t_start.year,t_start.month,t_start.day)
-        end = dt.date(t_end.year, t_end.month, t_end.day)
+    start, end = date_input(start, end)
     lastweek = date_iter(start, end)
     for date in lastweek:
         encounters = url_direct(date)
@@ -106,9 +117,7 @@ def absolute(start=None, end=None):
 
 def relative():
     "get files based on relative date range"
-    
     encounters = url_prep(delta=0, count=90)
-
     for inspection in encounters:
         #try:
         grab_pdf(inspection)
