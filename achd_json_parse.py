@@ -518,8 +518,6 @@ def grid_relabel(doc):
     for condition in enumerate(doc):
         if condition[0] > 25:
             yield {k[:-5]:v for k,v in condition[1].items()}
-        elif condition[0] == 25:
-            pass
         elif condition[0] >= 10:
             yield {k[:-2]:v for k,v in condition[1].items()}
         else:
