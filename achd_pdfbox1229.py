@@ -81,15 +81,15 @@ class achdInspect(object):
 
     def make_regions(self):
         "Food Safety Assessment Categories page 1"
-        self.tag = self.regionBox("tag", (62, 230, 419, 13.5), (26,))
-        self.diamond = self.regionBox("diamond", (346, 230, 26, 13.5), (26,))
-        self.satisfactory = self.regionBox("satisfactory", (373, 230, 26, 13.5), (26,))
-        self.not_observed = self.regionBox("not_observed", (401, 230, 26, 13.5), (26,))
-        self.not_applicable = self.regionBox("not_applicable", (427, 230, 26, 13.5), (26,))
-        self.violation = self.regionBox("violation", (455, 230, 26, 13.5), (26,))
-        self.high = self.regionBox("high", (486, 230, 26, 13.5), (26,))
-        self.med = self.regionBox("med", (513, 230, 26, 13.5), (26,))
-        self.low  = self.regionBox("low", (544, 230, 26, 13.5), (26,))
+        self.tag = self.regionBox("tag", (62, 216.5, 419, 13.5), (26,))
+        self.diamond = self.regionBox("diamond", (346, 216.5, 26, 13.5), (26,))
+        self.satisfactory = self.regionBox("satisfactory", (373, 216.5, 26, 13.5), (26,))
+        self.not_observed = self.regionBox("not_observed", (401, 216.5, 26, 13.5), (26,))
+        self.not_applicable = self.regionBox("not_applicable", (427, 216.5, 26, 13.5), (26,))
+        self.violation = self.regionBox("violation", (455, 216.5, 26, 13.5), (26,))
+        self.high = self.regionBox("high", (486, 216.5, 26, 13.5), (26,))
+        self.med = self.regionBox("med", (513, 216.5, 26, 13.5), (26,))
+        self.low  = self.regionBox("low", (544, 216.5, 26, 13.5), (26,))
         
         self.clientinfo_a = self.regionBox("client_a",(35, 104, 205, 13.5), (6,))
         self.clientinfo_b = self.regionBox("client_b",(240, 104, 205, 13.5), (6,))
@@ -112,15 +112,15 @@ class achdInspect(object):
 
     def more_regions(self):
         "General Sanitation Section page 1"
-        self.tag = self.regionBox("tag-san", (62, 612, 180, 13.5), (10,))
-        self.diamond = self.regionBox("diamond-san", (346, 612, 26, 13.5), (10,))
-        self.satisfactory = self.regionBox("satisfactory-san", (373, 612, 26, 13.5), (10,))
-        self.not_observed = self.regionBox("not_observed-san", (401, 612, 26, 13.5), (10,))
-        self.not_applicable = self.regionBox("not_applicable-san", (427, 612, 26, 13.5), (10,))
-        self.violation = self.regionBox("violation-san", (455, 612, 26, 13.5), (10,))
-        self.high = self.regionBox("high-san", (486, 612, 26, 13.5), (10,))
-        self.med = self.regionBox("med-san", (513, 612, 26, 13.5), (10,))
-        self.low  = self.regionBox("low-san", (544, 612, 26, 13.5), (10,))
+        self.tag = self.regionBox("tag-san", (62, 598.5, 180, 13.5), (11,))
+        self.diamond = self.regionBox("diamond-san", (346, 598.5, 26, 13.5), (11,))
+        self.satisfactory = self.regionBox("satisfactory-san", (373, 598.5, 26, 13.5), (11,))
+        self.not_observed = self.regionBox("not_observed-san", (401, 598.5, 26, 13.5), (11,))
+        self.not_applicable = self.regionBox("not_applicable-san", (427, 598.5, 26, 13.5), (11,))
+        self.violation = self.regionBox("violation-san", (455, 598.5, 26, 13.5), (11,))
+        self.high = self.regionBox("high-san", (486, 598.5, 26, 13.5), (11,))
+        self.med = self.regionBox("med-san", (513, 598.5, 26, 13.5), (11,))
+        self.low  = self.regionBox("low-san", (544, 598.5, 26, 13.5), (11,))
         self.regions = (self.tag, 
                 self.diamond, 
                 self.satisfactory, 
