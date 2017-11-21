@@ -468,7 +468,7 @@ def gridgather(jdoc):
     #regroup pulls together the row of the grid
     #this replicates the original structure
     regroup=([x+str(y) for x in gridspace] for y in range(26))
-    regroup_san=([x+str(y) for x in gridspace_san] for y in range(8))
+    regroup_san=([x+str(y) for x in gridspace_san] for y in range(10))
     full_group = list(chain(regroup,regroup_san))
     #Named tuple for index or kw assignment
     Row = namedtuple('AssesCat',gridspace, verbose=False,rename=False)
@@ -507,7 +507,7 @@ def gridgather_dict(jdoc):
                 'med-san',
                 'low-san']
     regroup=([x+str(y) for x in gridspace] for y in range(26))
-    regroup_san=([x+str(y) for x in gridspace_san] for y in range(8))
+    regroup_san=([x+str(y) for x in gridspace_san] for y in range(10))
     full_group = chain(regroup,regroup_san)
     test6=[list(chain([{key:value for key,value in jdoc.items() if key==y} for y in z])) for z in full_group]
     test7=[OrderedDict(chain.from_iterable(x.items() for x in z)) for z in test6]
