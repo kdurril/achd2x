@@ -2,14 +2,14 @@
 # -*- coding: utf-8 -*-
 # This is a daily file for downloading achd inspections
 
-from achd_datetools import *
+# url_direct
+
+from achd_datetools import achd_today, date_iter, date_iso
 import datetime as dt
 from functools import wraps
-from glob import glob
 from itertools import chain
 from os import mkdir, path
 from os.path import basename
-import sys
 import urllib.request
 import urllib.error
 
@@ -22,33 +22,22 @@ def parse(pdf_file=None):
             f.write(txt_out)
             return txt_out
 
-def url_prep(delta=1, count=90):
-    "Create iterator of urls, default yesterday, 49 inspections"
-    url_stem = "http://appsrv.achd.net/reports/rwservlet?food_rep_insp&P_ENCOUNTER="
-    d = date.today()
-    d1 = timedelta(days=delta)
-    day = date_iso(d-d1)
-    base_stem = url_stem+day
-    zfil = (str(x).zfill(4) for x in range(1, count))
-    encounters = (base_stem+x for x in zfil)
-    return encounters
-
 def url_direct(date):
     "Create iterator of urls from supplied date"
     url_stem = "http://appsrv.achd.net/reports/rwservlet?food_rep_insp&P_ENCOUNTER="
     day = date_iso(date)
     base_stem = url_stem+day
-    zfil = (str(x).zfill(4) for x in range(1, 3))
+    zfil = (str(x).zfill(4) for x in range(1, 100))
     encounters = (base_stem+x for x in zfil)
     return encounters
 
 def grab_pdf(inspection):
-    "Takes inspection from url_prep, download pdf"
+    "Takes inspection from url_direct, download pdf"
     opener = urllib.request.build_opener()
     opener.addheaders = [('User-agent',\
         '''Mozilla/5.0 
-        (X11; Ubuntu; Linux x86_64; rv:54.0) 
-        Gecko/20170613 Firefox/54.0'''),\
+        (X11; Ubuntu; Linux x86_64; rv:55.0) 
+        Gecko/20171026 Firefox/55.0'''),\
         ('Accept-encoding', 'gzip')]
     folder = "./"+inspection[-12:-4]
     pdffile = inspection[-12:]
@@ -56,13 +45,15 @@ def grab_pdf(inspection):
     if path.isdir(folder) == False:
                 mkdir(folder)
     with opener.open(inspection) as viewout:
-        if viewout.getheader('Content-Type') == 'application/pdf':  
+        while viewout.getheader('Content-Type') == 'application/pdf':  
             outputfolder = folder+'/'+pdffile+'.pdf'
             with open(outputfolder, "wb") as pdfout:
                     pdfout.write(viewout.read())
             return outputfolder
-        else:
-            print(viewout.getheader('Content-Type'))
+        #else:
+        #    print(viewout.getheader('Content-Type'))
+        #    print(pdffile)
+        #    break
 
 #Date input helper functions
 #date_tuple and date_str allows human input that converts to datetime obj
@@ -115,15 +106,5 @@ def absolute(start=None, end=None):
                 with open('inspection.log','a') as ins_log:
                     ins_log.write(inspection)
 
-def relative():
-    "get files based on relative date range"
-    encounters = url_prep(delta=0, count=90)
-    for inspection in encounters:
-        #try:
-        grab_pdf(inspection)
-        #except urllib.error.HTTPError as e:
-        #    print("fail, {}".format(e.code))
-
 if __name__ == '__main__':
-    #absolute()
-    absolute('20171102','20171103')
+    absolute(achd_today)
