@@ -23,9 +23,9 @@ def pdfjson(in_path='./json/*.json'):
             yield {'ins_name':inspect_id, 'ins_text': pdfopen.read()}
     
 
-def txt2db(thelist=pdftxt(), database='postgres', user='kenneth', password=None):
+def txt2db(thelist=pdftxt(), database='postgres', user='kenneth',host=None, port=None, password=None):
     "Add text from initial pdf to text parsing - this loses its structure"
-    con = psycopg2.connect(database=database, user=user, password=password)
+    con = psycopg2.connect(database=database, user=user,host=host,port=port,password=password)
     cur = con.cursor()
     
     the_text=thelist
@@ -43,9 +43,9 @@ def txt2db(thelist=pdftxt(), database='postgres', user='kenneth', password=None)
     con.commit()
     con.close()
 
-def json2db(thelist=pdfjson(), database='postgres', user='kenneth', password=None):
+def json2db(thelist=pdfjson(), database='postgres', user='kenneth', host=None, port=None, password=None):
     "Add json from initial pdf parsing"
-    con = psycopg2.connect(database=database, user=user, password=password)
+    con = psycopg2.connect(database=database, user=user, host=host, port=port, password=password)
     cur = con.cursor()
 
     the_json=thelist
@@ -66,14 +66,16 @@ def json2db(thelist=pdfjson(), database='postgres', user='kenneth', password=Non
     con.commit()
     con.close()
 
-def update_jsonalt(database='postgres', user='kenneth', password=None):
+def update_jsonalt(database='postgres', user='kenneth', host=None, port=None, password=None):
     "Add parsed json doc to postgres"
-    con = psycopg2.connect(database=database, user=user, password=password)
+    con = psycopg2.connect(database=database, user=user, host=host, port=port, password=password)
     cur = con.cursor()
     qry_json = '''SELECT inspect_id, docjson FROM achd2016 
-                  WHERE inspect_id > to_number(%s+'0001')
+                  WHERE inspect_id BETWEEN to_number(%s,'999999999999') AND to_number(%s,'999999999999')
                   AND docjson IS NOT NULL;'''
-    cur.execute(qry_json,[achd_today] )
+    first_record = achd_today+'0000'
+    last_record = achd_today+'0110'   
+    cur.execute(qry_json,[first_record, last_record] )
     docs=cur.fetchall()
     jsondocs=({'ins_name':x[0], 
                'doc_json':Inspection(x).to_json()} 
@@ -90,13 +92,14 @@ def update_jsonalt(database='postgres', user='kenneth', password=None):
     con.close()
 
 
-def tsvectorize(database='postgres', user='kenneth', password=None):
+def tsvectorize(database='postgres', user='kenneth', host=None, port=None, password=None):
     "Make full-text searchable with normalization, stemming"
-    con = psycopg2.connect(database=database, user=user, password=password)
+    con = psycopg2.connect(database=database, user=user, host=host, port=port, password=password)
     cur = con.cursor()
     'Concert text to ts_vector'
-    qry_updatedb = "UPDATE achd2016 SET docvector = to_tsvector(doctxt) WHERE docvector IS NULL AND inspect_id > to_number(%s+'0001');"
-    cur.execute(qry_updatedb, [achd_today])
+    qry_updatedb = "UPDATE achd2016 SET docvector = to_tsvector(doctxt) WHERE docvector IS NULL AND inspect_id > to_number(%s, '999999999999');"
+    first_record = achd_today+'0000'
+    cur.execute(qry_updatedb, [first_record])
     con.commit()
 
 def jsonalso():
