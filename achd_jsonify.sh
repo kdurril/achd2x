@@ -1,2 +1,4 @@
 #!/bin/sh
-/home/kenneth/jython2.7.0/bin/jython -Dpython.path=/home/kenneth/Development/pdfbox-2.0.2/app/target/pdfbox-app-2.0.2.jar ./achd_test.py
+/Users/kdurril/jython2.7.0/bin/jython \
+-Dpython.path=/Users/kdurril/Downloads/pdfbox-app-2.0.6.jar \
+./achd_test.py
