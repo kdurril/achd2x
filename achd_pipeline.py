@@ -1,17 +1,18 @@
 #!/home/kenneth/Documents/scripts/achdremix/remix/bin/python3
 #ACHDREMIX Pipeline
-import subprocess
-from achd_daily3 import url_prep, absolute, grab_pdf
-from achd_jsondb import pdftxt, pdfjson, txt2db, json2db
-from achd_jsondb import tsvectorize, update_jsonalt
+from achd_daily3 import absolute, grab_pdf
+from achd_datetools import achd_today
+from achd_jsondb import json2db, pdftxt, pdfjson, txt2db, \
+                        tsvectorize, update_jsonalt
 import datetime as dt
 import glob
 import os
+import subprocess
 import sys
 
 '''
 1) Get data from achd.net
-  - Cpython3.5
+  - Cpython3.5 or greater
   - achd_daily3.py
 
 2) Transform pdf into json
@@ -19,63 +20,56 @@ import sys
   - achd_test.py
 
 3) Place text and json documents into database
-  - Cpython3.5
+  - Cpython3.5 or greater
   - achd_jsondb.py
 
 4) Transform json
   - Cpython3.5
-  
-  - client and inspection info
-    - achd_jsontxtalt.py
   
   - grid
     - achd_json_parse.py
 
   - comments
     - achd_comment_parse.py
-    - achd_comments_db.py
 
 5) Analysis
   - achd_descriptive_stats.py
 
 6) Display
 '''
-#Set date range
-#  - are dates relative or absolute
-#Set output
-#  - are paths relative or absolute
+
+#Date comes from achd_today in datetools
+#  - useful as global
+#  - see datetools
+#Output
+#  - paths relative or absolute
+#  - achd_daily - to file
+#  - achd_test - to file
+#  - achd_jsondb - to db
 
 #review design to see that scripts are built with callables that can take outputs and dates
 base_project='./'
-day = '{:%Y%m%d}'.format(dt.datetime.today())
-#day = '{:%Y%m%d}'.format(dt.datetime(2017,7,20))
-
-#dir_out = glob.iglob(base_project+day+'/'+day+'*.pdf')
 
 #"achd_daily3.py"
+absolute(achd_today)
 
-encounters = url_prep(delta=0, count=83)
-for inspection in encounters:
-    try:
-        grab_pdf(inspection)
-    except:
-        print(str(inspection))
-
-#"jython -Dpython.path=/home/kenneth/Development/pdfbox-2.0.2/app/target/pdfbox-app-2.0.2.jar achd_test.py"
+#"jython -Dpython.path=/home/kenneth/Downloads/pdfbox-app-2.0.6.jar achd_test.py"
 subprocess.run("./achd_jsonify.sh")
 
-#"achd_jsondb.py"
-#password isn't sensative for this
-#all data is publicly available
-#password is in place because I'd rather keep the habit than not
-PASSWORD='achd282' #sys.argv[1]
-txt=pdftxt(in_path=base_project+'txt/'+day+'*.txt') 
-#txt=pdftxt(in_path=base_project+'txt/201706*.txt') 
-json=pdfjson(in_path=base_project+'json/'+day+'*.json')
-#json=pdfjson(in_path=base_project+'json/201706*.json')
+#DB credential
+DB=os.environ.get('ACHD_DB')
+USER=os.environ.get('ACHD_DBUSER')
+PASSWORD=os.environ.get('ACHD_DBPWD')
+HOST=os.environ.get('ACHD_DBHOST')
+PORT=os.environ.get('ACHD_DBPORT')
 
-txt2db(thelist=txt,database='postgres',user='kenneth',password=PASSWORD)
-json2db(thelist=json,database='postgres',user='kenneth',password=PASSWORD)
-tsvectorize(database='postgres',user='kenneth',password=PASSWORD)
-update_jsonalt(database='postgres',user='kenneth',password=PASSWORD)
-#"achd_jsontxtalt"
+#"achd_jsondb.py"
+#Files to send to db
+txt=pdftxt(in_path=base_project+'txt/'+achd_today+'*.txt') 
+json=pdfjson(in_path=base_project+'json/'+achd_today+'*.json')
+
+#Database calls
+txt2db(thelist=txt,database=DB,host=HOST,port=PORT,user=USER,password=PASSWORD)
+json2db(thelist=json,database=DB,host=HOST,port=PORT,user=USER,password=PASSWORD)
+tsvectorize(database=DB,user=USER,host=HOST,port=PORT,password=PASSWORD)
+update_jsonalt(database=DB,user=USER,host=HOST,port=PORT,password=PASSWORD)
