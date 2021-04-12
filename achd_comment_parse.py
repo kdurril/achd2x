@@ -143,18 +143,20 @@ def final_comments(doc):
     
     r_group=[[violation_label(y) for y in comment] for comment in comments]
     for violation in r_group:
-        #try:
-        if violation != None:
-            comment_iso=dict_parse(violation)
-            if comment_iso == None:
-                break
-            stopline=[x for x in comment_iso['comments'] if 'RISK*' in x]
-            comment_parse=parselist(stopline, comment_iso)
-            risk_iso=severity_parse(list(parselist(stopline, comment_iso['comments'])))
-            comment_iso['comments']=risk_iso
-            yield comment_iso
-        else:
-            yield comment_iso
+        try:
+            if violation != None:
+                comment_iso=dict_parse(violation)
+                if comment_iso == None:
+                    break
+                stopline=[x for x in comment_iso['comments'] if 'RISK*' in x]
+                comment_parse=parselist(stopline, comment_iso)
+                risk_iso=severity_parse(list(parselist(stopline, comment_iso['comments'])))
+                comment_iso['comments']=risk_iso
+                yield comment_iso
+            else:
+                yield comment_iso
+        except:
+            pass
     if "Other Assesment observations and comments:\n" == comments[-1][0]:
         other_asses=comments.pop()
         assessment=other_parse(other_asses)

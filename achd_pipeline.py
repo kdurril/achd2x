@@ -1,14 +1,16 @@
-#!/home/kenneth/Documents/scripts/achdremix/remix/bin/python3
+#!/home/kenneth7/rebuild/rmx2/bin/python
 #ACHDREMIX Pipeline
 from achd_daily3 import absolute, grab_pdf
 from achd_datetools import achd_today
 from achd_jsondb import json2db, pdftxt, pdfjson, txt2db, \
                         tsvectorize, update_jsonalt
+import achd_jsonify
 import datetime as dt
 import glob
 import os
 import subprocess
 import sys
+import time
 
 '''
 1) Get data from achd.net
@@ -51,12 +53,15 @@ import sys
 base_project='./'
 
 #"achd_daily3.py"
-absolute(achd_today)
+#absolute(achd_today)
 
-#"jython -Dpython.path=/home/kenneth/Downloads/pdfbox-app-2.0.6.jar achd_test.py"
-subprocess.run("./achd_jsonify.sh")
-
-#DB credential
+#This calls to achd_jsonify that calls to jython
+#This processes one doc at a time for the small digital ocean instance
+for document in achd_jsonify.dir_out:
+    achd_jsonify.jython_process_pdf(base_dir=achd_jsonify.base_dir,document=document)
+    print(document + " jsonifyied")
+    time.sleep(2)
+#DB credentials
 DB=os.environ.get('ACHD_DB')
 USER=os.environ.get('ACHD_DBUSER')
 PASSWORD=os.environ.get('ACHD_DBPWD')
@@ -66,10 +71,11 @@ PORT=os.environ.get('ACHD_DBPORT')
 #"achd_jsondb.py"
 #Files to send to db
 txt=pdftxt(in_path=base_project+'txt/'+achd_today+'*.txt') 
-json=pdfjson(in_path=base_project+'json/'+achd_today+'*.json')
+json_data=pdfjson(in_path=base_project+'json/'+achd_today+'*.json')
 
 #Database calls
+#
 txt2db(thelist=txt,database=DB,host=HOST,port=PORT,user=USER,password=PASSWORD)
-json2db(thelist=json,database=DB,host=HOST,port=PORT,user=USER,password=PASSWORD)
+json2db(thelist=json_data,database=DB,host=HOST,port=PORT,user=USER,password=PASSWORD)
 tsvectorize(database=DB,user=USER,host=HOST,port=PORT,password=PASSWORD)
 update_jsonalt(database=DB,user=USER,host=HOST,port=PORT,password=PASSWORD)
