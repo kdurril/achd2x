@@ -11,7 +11,6 @@ from itertools import chain
 from achd_json_parse import violation_label, keygather, getcomments, gridgather, base_build
 from achd_json_parse import gridgather_dict, grid_relabel
 from achd_json_parse import parselist
-#doc_file="/home/kenneth/Documents/scripts/achdremix/json/20160812*.json"
 #json_docs = (json.loads(open(x).read(), object_pairs_hook=OrderedDict) for x in iglob(doc_file))
 #docs2 = list(json_docs)
 #docs[11]['comments_a48']

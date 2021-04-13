@@ -10,24 +10,10 @@ from os.path import basename
 from itertools import chain
 import datetime as dt
 
-#doc_file="/home/kenneth/Documents/scripts/achdremix/json/20160728*.json"
-#, object_pairs_hook=OrderedDict
-#json_docs = (json.loads(open(x).read(), object_pairs_hook=OrderedDict) for x in iglob(doc_file))
-#docs = list(json_docs)
-#docs.remove(OrderedDict())
-#add(x) for x in iglob(doc_file)
-
-#Use a counter for a histogram of the keys
-#d = Counter()
-#md = [d.update(x.keys()) for x in docs]
 
 #check for consistency
 #some keys should be in all dicts
 #test for membership
-#len([x for x in docs if not x.get('client_a1')])
-# [x for x in docs if not x.get('client_a1')]
-# bad_item=[docs.index(x) for x in docs if not x.get('client_a1')]
-# docs.remove(*bad_item)
 #client_a0
 client_id=re.compile('(\d+)Client\sID:')
 #client_a1
@@ -40,27 +26,19 @@ muni=re.compile('(\w.*)Municipality:')
 #merge client_a4, client_b4
 #set(x['client_a4'][:-15]+x['client_b4'][:-7] for x in docs)
 #client_a4
-#p=set(x['client_a4'] for x in docs)
-#p_trim=set(x[:-15] for x in p)
-#p_sort=sorted(list(p_trim),key=lambda x: len(x))
-#p_sort1=sorted(list(p_trim),key=lambda x: int(x[:3]))
 cat_code=re.compile('(\d.*)Category Code:')
 #clientb4
 cat_code2=re.compile('(\w.*)\sPrior')
-#merged
-#cat_code.match(docs[5]['client_a4']).group(1)+cat_code2.match(docs[5]['client_b4']).group(1)
 
 #client_a5
 re_inspect=re.compile('(^.*)Re-\s+Inspection')
 
 #client_b0
-#[client_b0][:-12]
 client_name=re.compile('(\w.*)Client Name:')
 #client_b1
 #
 #client_b2
 state_zip=re.compile('(?P<state>\w{2})State:\s?(?P<zipcode>\d{5})Zip:')
-#state,zip_code=state_zip.search(docs[1]['client_b2']).groups()
 #client_b3
 ins=re.compile('Inspector:\s(?P<inspector>\w.*)\sPerm')
 #ins.match(inspector[2]).group('inspector')
@@ -78,14 +56,6 @@ permit_exp=re.compile('Date:\s(\d{2}/\d{2}/\d{4})')
 #client_c4
 priority=re.compile('Code:\s(.*)')
 
-#ins_date=re.compile('\d{2}/\d{2}/\d{4}')
-#ins_date.search(docs[1]['client_c3']).group()
-
-#label=re.compile('(?<=\w.*)[A-Z].*:')
-#address=[x['client_a1'] for x in docs[:20] if x['client_a1']]
-#[addr.match(x).group(1) for x in address]
-
-#[x for x in docs[79].keys() if 'inspect' in x]
 #Example output from inspect keys
 #['Delphia , NicholasInspector Name:\n', 'Inspected & PermittedPlacarding:\n', 
 #'04:30:00 PM03:55:00 PM End Time:Start Time:\n', 
@@ -97,8 +67,6 @@ inspector=re.compile('(\w.*)Inspector Name:')
 placard=re.compile('(\w.*)Placarding:')
 #inspect_a2
 time=r'\d{2}:\d{2}:\d{2}\s\w{2}'
-#time_re=re.compile(r'(?P<end>'+time+r')\s?(?P<start>'+time+r')\sEnd\sTime:Start\sTime:')
-#time_re=re.compile('(?P<end>\d{2}:\d{2}:\d{2}\s\w{2})\s?(?P<start>\d{2}:\d{2}:\d{2}\s\w{2})\s?End\sTime:Start\sTime:')
 time_re=re.compile(r'(?P<end>'+time+r')(?P<start>'+time+r')')
 
 def time_sort(t):

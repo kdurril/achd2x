@@ -23,7 +23,7 @@ def pdfjson(in_path='./json/*.json'):
             yield {'ins_name':inspect_id, 'ins_text': pdfopen.read()}
 
 
-def txt2db(thelist=pdftxt(), database='postgres', user='kenneth',host=None, port=None, password=None):
+def txt2db(thelist=pdftxt(), database='database', user='user',host=None, port=None, password=None):
     "Add text from initial pdf to text parsing - this loses its structure"
     con = psycopg2.connect(database=database, user=user,host=host,port=port,password=password)
     cur = con.cursor()
@@ -43,7 +43,7 @@ def txt2db(thelist=pdftxt(), database='postgres', user='kenneth',host=None, port
     con.commit()
     con.close()
 
-def json2db(thelist=pdfjson(), database='postgres', user='kenneth', host=None, port=None, password=None):
+def json2db(thelist=pdfjson(), database='database', user='user', host=None, port=None, password=None):
      "Add json from initial pdf parsing"
      con = psycopg2.connect(database=database, user=user, host=host, port=port, password=password)
      cur = con.cursor()
@@ -68,7 +68,7 @@ def json2db(thelist=pdfjson(), database='postgres', user='kenneth', host=None, p
      con.close()
 
 alteredjsondb = """
-def json2db(thelist=pdfjson(), database='postgres', user='kenneth', host=None, port=None, password=None):
+def json2db(thelist=pdfjson(), database='database', user='user', host=None, port=None, password=None):
     "Add json from initial pdf parsing"
     con = psycopg2.connect(database=database, user=user, host=host, port=port, password=password)
     cur = con.cursor()
@@ -103,7 +103,7 @@ def json2db(thelist=pdfjson(), database='postgres', user='kenneth', host=None, p
     con.close()
 """
 
-def update_jsonalt(database='postgres', user='kenneth', host=None, port=None, password=None):
+def update_jsonalt(database='database', user='user', host=None, port=None, password=None):
     "Add parsed json doc to postgres"
     con = psycopg2.connect(database=database, user=user, host=host, port=port, password=password)
     cur = con.cursor()
@@ -129,7 +129,7 @@ def update_jsonalt(database='postgres', user='kenneth', host=None, port=None, pa
     con.close()
 
 
-def tsvectorize(database='postgres', user='kenneth', host=None, port=None, password=None):
+def tsvectorize(database='database', user='user', host=None, port=None, password=None):
     "Make full-text searchable with normalization, stemming"
     con = psycopg2.connect(database=database, user=user, host=host, port=port, password=password)
     cur = con.cursor()

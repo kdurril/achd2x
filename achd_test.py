@@ -5,11 +5,10 @@ from achd_datetools import achd_today
 from achd_pdfbox1229 import *
 import datetime as dt
 from glob import iglob
-from os import path
+from os import path, environ
 from sys import argv
 
-#base_dir="/home/kenneth7/rebuild/achd_remix/"
-base_dir="/home/kdurril/Development/rebuild/rebuild/rebuild/achd_remix/"
+base_dir=environ.get('ACHD_BASE_DIR')
 
 def process_file(x,base_dir="/mnt/"):
     "process the given file"

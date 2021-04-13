@@ -1,4 +1,3 @@
-#!/home/kenneth7/rebuild/rmx2/bin/python
 #ACHDREMIX Pipeline
 from achd_daily3 import absolute, grab_pdf
 from achd_datetools import achd_today
