@@ -1,5 +1,5 @@
 #ACHDREMIX Pipeline
-from achd_daily3 import absolute, grab_pdf
+from achd_daily import absolute, grab_pdf
 from achd_datetools import achd_today
 from achd_jsondb import json2db, pdftxt, pdfjson, txt2db, \
                         tsvectorize, update_jsonalt
@@ -14,7 +14,7 @@ import time
 '''
 1) Get data from achd.net
   - Cpython3.5 or greater
-  - achd_daily3.py
+  - achd_daily.py
 
 2) Transform pdf into json
   - jython2.7
@@ -51,7 +51,7 @@ import time
 #review design to see that scripts are built with callables that can take outputs and dates
 base_project='./'
 
-#"achd_daily3.py"
+#"achd_daily.py"
 #absolute(achd_today)
 
 #This calls to achd_jsonify that calls to jython

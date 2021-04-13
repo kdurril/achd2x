@@ -34,5 +34,4 @@ def current_dir(base_dir="/mnt/", directory="20171010/"):
         for x in dir_out:
             process_file(x, base_dir=base_dir)
 if __name__ == '__main__':
-    #d = dt.datetime.strptime(argv[1], '%Y%m%d')
     current_dir(base_dir=base_dir, directory=argv[2]+"/")
