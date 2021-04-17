@@ -145,15 +145,12 @@ class achdInspect(object):
                 self.clientinfo_a)
         return self.regions
 
-    def make_page_comments(self,page_num):
+    def make_page_comments(self,page_num,box_init,box_count):
         "Violation Comments from page 2"
         label = "comment"+"_p"+str(page_num)+"_"
-        self.clientinfo_a = self.regionBox(label,(36, 105, 540, 12.5), (50,))
-        
-        self.regions = (self.clientinfo_a,)
-                
+        self.clientinfo_b = self.regionBox(label, box_init, box_count)
+        self.regions = (self.clientinfo_b,)
         return self.regions
-
     #
     #Gather region information 
     #
@@ -253,8 +250,13 @@ class achdInspect(object):
         "gather the labeled data from each page"
         
         for x in range(self.count):
-            if x >= 2:
-                pX = self.text_generalized_alt(x,self.make_page_comments(x))
+            if x >= 3:
+                pX = self.text_generalized_alt(x,self.make_page_comments(x,(36, 105, 540, 12.5), (50,)))
+                for attribute in pX:
+                    if attribute[1] != '\n':
+                        yield attribute
+            if x == 2:
+                pX = self.text_generalized_alt(x,self.make_page_comments(x,(36, 342, 540, 12.5), (50,)))
                 for attribute in pX:
                     if attribute[1] != '\n':
                         yield attribute

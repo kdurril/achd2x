@@ -45,11 +45,13 @@ def grab_pdf(inspection):
     if path.isdir(folder) == False:
                 mkdir(folder)
     with opener.open(inspection) as viewout:
-        while viewout.getheader('Content-Type') == 'application/pdf':  
+        if viewout.getheader('Content-Type') == 'application/pdf':  
             outputfolder = folder+'/'+pdffile+'.pdf'
             with open(outputfolder, "wb") as pdfout:
                     pdfout.write(viewout.read())
             return outputfolder
+        #elif viewout.getheader('Content-Type') == 'text/html':
+        #    break
         #else:
         #    print(viewout.getheader('Content-Type'))
         #    print(pdffile)
@@ -102,6 +104,7 @@ def absolute(start=None, end=None):
         for inspection in encounters:
             try: 
                 grab_pdf(inspection)
+                print(inspection)
             finally:
                 with open('inspection.log','a') as ins_log:
                     ins_log.write(inspection)
